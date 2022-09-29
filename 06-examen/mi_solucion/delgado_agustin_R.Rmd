@@ -1,0 +1,123 @@
+---
+title: "R_delgado_agustin"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(magrittr)
+```
+
+
+```{r}
+df_recibos <- read.csv('datasets/recibos_facts_debitos.csv') %>% as_tibble()
+df_dolar <- read.csv('datasets/dolar_blue - Hoja 1.csv') %>% as_tibble()
+```
+
+```{r}
+#rows and cols
+print(nrow(df_recibos))
+print(ncol(df_recibos))
+```
+
+```{r}
+colSums(is.na(df_recibos))
+```
+
+```{r}
+sum(is.na(df_recibos))/prod(dim(df_recibos))*100
+```
+
+```{r}
+summary(df_recibos)
+```
+
+
+
+```{r}
+df_recibos<- select(df_recibos, -X) %>% drop_na()
+names(df_recibos) <- tolower(names(df_recibos))
+
+names(df_recibos)
+```
+
+```{r}
+length(unique(df_recibos$id_cliente))
+```
+```{r}
+sapply(df_recibos, class)
+```
+
+```{r}
+df_recibos$fecha <- as.Date(df_recibos$fecha)
+sapply(df_recibos, class)
+```
+
+```{r}
+df_recibos$año_y_mes <- format(as.Date(df_recibos$fecha, format="%Y/%m/%d"),"%Y-%m")
+
+df_recibos
+```
+```{r}
+df_recibos <- mutate(df_recibos, tipo = substr(df_recibos$nro.comprobante,1,3))
+```
+
+```{r}
+df_recibos
+```
+
+
+```{r}
+gr_tipo <- group_by(df_recibos, tipo) 
+gr_tipo %>% count()
+```
+
+```{r}
+gr_tipo %>% summarise(montos = sum(total))
+```
+```{r}
+df_recibos_REC_ND <- filter(df_recibos, (tipo == 'REC') | (tipo =='N/D'))
+df_recibos_REC_ND
+```
+
+```{r}
+df_recibos_REC_ND <- group_by(df_recibos_REC_ND, año_y_mes) %>% summarise(monto_cobrado = sum(total), cantidad_recibos = n())
+df_recibos_REC_ND
+```
+```{r}
+sapply(df_dolar, class)
+
+df_dolar$año_y_mes <- format(as.Date(df_dolar$Fecha, format="%d-%m-%Y"),"%Y-%m")
+df_dolar
+```
+
+```{r}
+df_dolar$Venta <- sub(",",".",df_dolar$Venta)
+```
+
+```{r}
+sapply(df_dolar, class)
+df_dolar$Venta <- as.numeric(df_dolar$Venta)
+```
+
+
+```{r}
+gr_mean <- group_by(df_dolar, año_y_mes) %>% summarise(valor_promedio = mean(Venta))
+gr_mean
+```
+
+
+```{r}
+merge_final <- merge(x=df_recibos_REC_ND,y=gr_mean,by="año_y_mes")
+merge_final
+
+```
+
+
+
+
