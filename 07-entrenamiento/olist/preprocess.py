@@ -59,5 +59,16 @@ def calcular_precio_y_transporte(dict_of_dfs):
 
 ###calcular distancia entre vendedor y comprador
 
-def calcular_distancia_vendedor_comprador(dict_of_dfs):
-    geo_df = dict_of_dfs['geolocation'].groupby('geolocation_zip_code_prefix').first().reset_index()
+def calcular_distancia_vendedor_comprador(data):
+    orders = data['orders']
+    order_items = data['order_items']
+    sellers = data['sellers']
+    customers = data['customers']
+
+    geo = data['geolocation']
+    geo = geo.groupby('geolocation_zip_code_prefix').first().reset_index()
+
+
+
+#select the columns i want to keep in df
+
