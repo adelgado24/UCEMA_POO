@@ -60,13 +60,13 @@ def calcular_precio_y_transporte(dict_of_dfs):
 
 ###calcular distancia entre vendedor y comprador
 
-def calcular_distancia_vendedor_comprador(data):
-=======
+#def calcular_distancia_vendedor_comprador(data):
+
 from math import radians, sin, cos, asin, sqrt
 
 
 def transformar_columnas_datetime(orders):
-    # transformar a datetime. Una manera de que entre todo el código es usando "\" al final de la línea
+    # transformar a datetime. Una manera de que entretodo el código es usando "\" al final de la línea
     orders['order_delivered_customer_date'] = pd.to_datetime(orders['order_delivered_customer_date']) #se puede hacer de esta manera
     orders.loc[:, 'order_estimated_delivery_date'] = \
         pd.to_datetime(orders['order_estimated_delivery_date'])
